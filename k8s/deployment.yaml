@@ -10,7 +10,7 @@ spec:
       storage: 10Gi
   storageClassName: storage-class-name
   volumeMode: Filesystem
-----
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,32 +28,32 @@ spec:
         app: postgres
     spec:
       initContainers:
-      - name: init-postgres
-        image: busybox
-        command: ["sh", "-c", "rm -rf /var/lib/postgresql/data/*"]
-        volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: postgres-vol
+        - name: init-postgres
+          image: busybox
+          command: ["sh", "-c", "rm -rf /var/lib/postgresql/data/*"]
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-vol
       containers:
-      - name: postgres
-        image: postgres
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_DB
-          value: dbname
-        - name: POSTGRES_USER
-          value: dbuser
-        - name: POSTGRES_PASSWORD
-          value: dbpassword  
-        volumeMounts:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: dbname
+            - name: POSTGRES_USER
+              value: dbuser
+            - name: POSTGRES_PASSWORD
+              value: dbpassword
+          volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-vol
       volumes:
         - name: postgres-vol
           persistentVolumeClaim:
             claimName: postgres-vol
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -62,8 +62,8 @@ metadata:
     app: postgres
 spec:
   ports:
-  - port: 5432
-    targetPort: 5432
+    - port: 5432
+      targetPort: 5432
   selector:
     app: postgres
-  type: ClusterI
+  type: ClusterIP
